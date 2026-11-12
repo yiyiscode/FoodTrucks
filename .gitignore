@@ -4,3 +4,6 @@ venv
 .DS_Store
 elasticsearch
 *.pem
+# 含 AWS 帳號 ID 與密碼，不可進版控
+opensearch-*.json
+primary-container.json

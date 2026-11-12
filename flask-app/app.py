@@ -5,7 +5,18 @@ from flask import Flask, jsonify, request, render_template
 import sys
 import requests
 
-es = Elasticsearch(host='es')
+es_host = os.environ.get('ES_HOST', 'es')
+if es_host == 'es':
+    es = Elasticsearch(host=es_host)
+else:
+    es_user = os.environ.get('ES_USER')
+    es_pass = os.environ.get('ES_PASS')
+    es = Elasticsearch(
+        hosts=[{'host': es_host, 'port': 443, 'scheme': 'https'}],
+        http_auth=(es_user, es_pass),
+        use_ssl=True,
+        verify_certs=True
+    )
 
 app = Flask(__name__)
 
@@ -48,6 +59,11 @@ def check_and_load_index():
 @app.route('/')
 def index():
     return render_template('index.html')
+
+# add a new hello route
+@app.route('/hello')
+def hello():
+  return "hello world!"
 
 @app.route('/debug')
 def test_es():
